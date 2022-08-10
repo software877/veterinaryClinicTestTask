@@ -46,7 +46,7 @@ public class Requests {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                callback.onError();
             }
 
             @Override
