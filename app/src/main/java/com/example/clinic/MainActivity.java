@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.clinic.models.ConfigModel;
 import com.example.clinic.models.PetsModel;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError() {
+                Toast.makeText(getApplicationContext(), "The server error occurred", Toast.LENGTH_LONG).show();
 
             }
         }));
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void error() {
-
+                Toast.makeText(getApplicationContext(), "The server error occurred", Toast.LENGTH_LONG).show();
             }
         }));
 

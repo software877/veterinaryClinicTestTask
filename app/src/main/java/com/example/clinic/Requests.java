@@ -26,10 +26,12 @@ public class Requests {
 
     interface PetsResponse {
         void onSuccess(ArrayList<PetsModel> pets);
+        void onError();
     }
 
     interface ConfigResponse {
         void onSuccess(ConfigModel configModel);
+        void onError();
     }
 
 
@@ -80,7 +82,7 @@ public class Requests {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-
+                callback.onError();
             }
 
             @Override

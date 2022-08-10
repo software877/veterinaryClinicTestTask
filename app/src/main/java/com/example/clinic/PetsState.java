@@ -21,7 +21,7 @@ public abstract class PetsState {
     static class Error extends PetsState {
         @Override
         void handle(HandleResult handleResult) {
-
+            handleResult.onError();
         }
     };
 }
