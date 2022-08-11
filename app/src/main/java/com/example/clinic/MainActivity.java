@@ -16,10 +16,8 @@ import com.example.clinic.models.PetsModel;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainView {
 
-    PetsViewModel petsViewModel = new PetsViewModel();
-    ConfigViewModel configViewModel = new ConfigViewModel();
     private RecyclerView petsRecycler;
     private Button chatButton;
     private Button callButton;
@@ -28,11 +26,14 @@ public class MainActivity extends AppCompatActivity {
     private CustomDialog dialog;
     private CustomWebViewScreen customWebViewLayout;
     private LinearLayout buttonsLayout;
+    private final MainPresenter mainPresenter = new MainPresenter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainPresenter.bind(this);
 
         petsRecycler = findViewById(R.id.petsRecycler);
         chatButton = findViewById(R.id.chatButton);
@@ -45,38 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
         chatButton.setOnClickListener(view -> showDialog());
 
-        petsViewModel.state.observe(this, petsState -> petsState.handle(new HandleResult() {
-            @Override
-            public void onSuccess(ArrayList<PetsModel> pets) {
-                petsAdapter.setPets(pets);
-            }
-
-            @Override
-            public void onError() {
-                Toast.makeText(getApplicationContext(), "The server error occurred", Toast.LENGTH_LONG).show();
-
-            }
-        }));
-
-        configViewModel.state.observe(this, configState -> configState.handle(new HandleConfigResult() {
-            @Override
-            public void success(ConfigModel configModel) {
-                initChatButton(configModel);
-                initCallButton(configModel);
-                initButtonsLayout(configModel);
-                initHoursText(configModel);
-                dialog = new CustomDialog(MainActivity.this, hoursText.getText().toString());
-            }
-
-            @Override
-            public void error() {
-                Toast.makeText(getApplicationContext(), "The server error occurred", Toast.LENGTH_LONG).show();
-            }
-        }));
+        mainPresenter.getAllPets();
+        mainPresenter.getConfig();
 
         initPetsRecycler();
-        petsViewModel.getAllPets();
-        configViewModel.getConfig();
     }
 
     public void initCallButton(ConfigModel configModel) {
@@ -101,8 +74,36 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    @Override
+    public void showError() {
+        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "The server error occurred", Toast.LENGTH_LONG).show());
+    }
+
+    @Override
+    public void configObtained(ConfigModel configModel) {
+        runOnUiThread(() -> {
+            initChatButton(configModel);
+            initCallButton(configModel);
+            initButtonsLayout(configModel);
+            initHoursText(configModel);
+            dialog = new CustomDialog(MainActivity.this, hoursText.getText().toString());
+        });
+    }
+
+    @Override
+    public void petsObtained(ArrayList<PetsModel> pets) {
+        petsAdapter.setPets(pets);
+    }
+
     public void initHoursText(ConfigModel configModel) {
         hoursText.setText(configModel.getWorkHours());
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mainPresenter.unbind();
     }
 
     public void initPetsRecycler() {
@@ -110,5 +111,10 @@ public class MainActivity extends AppCompatActivity {
         petsRecycler.setLayoutManager(new LinearLayoutManager(this));
         petsRecycler.setAdapter(petsAdapter);
         petsAdapter.listener = contentUrl -> customWebViewLayout.initView(contentUrl);
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
     }
 }
