@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void petsObtained(ArrayList<PetsModel> pets) {
-        petsAdapter.setPets(pets);
+        runOnUiThread(() -> petsAdapter.setPets(pets));
     }
 
     public void initHoursText(ConfigModel configModel) {
