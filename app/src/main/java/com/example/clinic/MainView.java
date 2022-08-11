@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public interface MainView extends IView {
     void showError();
-    void configObtained(ConfigModel configModel);
     void petsObtained(ArrayList<PetsModel> pets);
+    void hideChatButton();
+    void hideCallButton();
+    void hideButtonsLayout();
+    void initHoursText(ConfigModel configModel);
 }

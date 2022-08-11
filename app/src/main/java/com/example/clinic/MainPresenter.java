@@ -31,8 +31,11 @@ public class MainPresenter extends BasePresenter<MainView> {
             @Override
             public void onSuccess(ConfigModel configModel) {
                 if (view != null) {
-                    view.configObtained(configModel);
+                    view.initHoursText(configModel);
                 }
+                setChatButtonVisibility(configModel);
+                setCallButtonVisibility(configModel);
+                setButtonsLayoutVisibility(configModel);
             }
 
             @Override
@@ -42,6 +45,42 @@ public class MainPresenter extends BasePresenter<MainView> {
                 }
             }
         });
+    }
+
+    void setChatButtonVisibility(ConfigModel configModel) {
+        if (hideChatButton(configModel)) {
+            if (view != null) {
+                view.hideChatButton();
+            }
+        }
+    }
+
+    public boolean hideButtonsLayout(ConfigModel configModel) {
+        return !configModel.getChatEnabled() && !configModel.getCallEnabled();
+    }
+
+    void setButtonsLayoutVisibility(ConfigModel configModel) {
+        if (hideButtonsLayout(configModel)) {
+            if (view != null) {
+                view.hideButtonsLayout();
+            }
+        }
+    }
+
+    public boolean hideChatButton(ConfigModel configModel) {
+        return !configModel.getChatEnabled();
+    }
+
+    void setCallButtonVisibility(ConfigModel configModel) {
+        if (!hideCallButton(configModel)) {
+            if (view != null) {
+                view.hideCallButton();
+            }
+        }
+    }
+
+    public boolean hideCallButton(ConfigModel configModel) {
+        return !configModel.getCallEnabled();
     }
 
 }

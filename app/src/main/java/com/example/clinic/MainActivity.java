@@ -43,31 +43,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
         buttonsLayout = findViewById(R.id.buttonsLayout);
 
         callButton.setOnClickListener(view -> showDialog());
-
         chatButton.setOnClickListener(view -> showDialog());
 
         mainPresenter.getAllPets();
         mainPresenter.getConfig();
 
         initPetsRecycler();
-    }
-
-    public void initCallButton(ConfigModel configModel) {
-        if (!configModel.getCallEnabled()) {
-            callButton.setVisibility(View.GONE);
-        }
-    }
-
-    public void initChatButton(ConfigModel configModel) {
-        if (!configModel.getChatEnabled()) {
-            chatButton.setVisibility(View.GONE);
-        }
-    }
-
-    public void initButtonsLayout(ConfigModel configModel) {
-        if (!configModel.getChatEnabled() && !configModel.getCallEnabled()) {
-            buttonsLayout.setVisibility(View.GONE);
-        }
     }
 
     void showDialog() {
@@ -80,25 +61,32 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void configObtained(ConfigModel configModel) {
-        runOnUiThread(() -> {
-            initChatButton(configModel);
-            initCallButton(configModel);
-            initButtonsLayout(configModel);
-            initHoursText(configModel);
-            dialog = new CustomDialog(MainActivity.this, hoursText.getText().toString());
-        });
-    }
-
-    @Override
     public void petsObtained(ArrayList<PetsModel> pets) {
         runOnUiThread(() -> petsAdapter.setPets(pets));
     }
 
-    public void initHoursText(ConfigModel configModel) {
-        hoursText.setText(configModel.getWorkHours());
+    @Override
+    public void hideChatButton() {
+        runOnUiThread(() -> chatButton.setVisibility(View.GONE));
     }
 
+    @Override
+    public void hideCallButton() {
+        runOnUiThread(() -> callButton.setVisibility(View.GONE));
+    }
+
+    @Override
+    public void hideButtonsLayout() {
+        runOnUiThread(() -> buttonsLayout.setVisibility(View.GONE));
+    }
+
+    @Override
+    public void initHoursText(ConfigModel configModel) {
+        runOnUiThread(() -> {
+            hoursText.setText(configModel.getWorkHours());
+            dialog = new CustomDialog(MainActivity.this, configModel.getWorkHours());
+        });
+    }
 
     @Override
     protected void onDestroy() {
