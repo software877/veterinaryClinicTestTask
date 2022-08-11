@@ -49,10 +49,27 @@ public class MainPresenterTest {
     }
 
     @Test
+    public void callButtonVisible() {
+        MainPresenter mainPresenter = new MainPresenter();
+        ConfigModel configModel = new ConfigModel(true, true, "");
+        Boolean result = mainPresenter.hideCallButton(configModel);
+        assertEquals(result, false);
+    }
+
+    @Test
     public void chatButtonHidden() {
         MainPresenter mainPresenter = new MainPresenter();
         ConfigModel configModel = new ConfigModel(false, true, "");
         Boolean result = mainPresenter.hideChatButton(configModel);
         assertEquals(result, true);
     }
+
+    @Test
+    public void chatButtonVisible() {
+        MainPresenter mainPresenter = new MainPresenter();
+        ConfigModel configModel = new ConfigModel(true, true, "");
+        Boolean result = mainPresenter.hideChatButton(configModel);
+        assertEquals(result, false);
+    }
+
 }
